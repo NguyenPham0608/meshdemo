@@ -40,6 +40,7 @@
 
         // Load environment map
         const loader = new THREE.CubeTextureLoader();
+
         const envMap = loader.load([
             `https://threejs.org/examples/textures/cube/${selectedSet}/posx.jpg`,
             `https://threejs.org/examples/textures/cube/${selectedSet}/negx.jpg`,
@@ -48,7 +49,9 @@
             `https://threejs.org/examples/textures/cube/${selectedSet}/posz.jpg`,
             `https://threejs.org/examples/textures/cube/${selectedSet}/negz.jpg`
         ]);
-        scene.background = envMap;
+        scene.background = null;
+        let bgOn = false;
+        let savedBackground = envMap; // store your current background
 
         // Glass material factory
         function makeGlassMaterial(color) {
@@ -58,8 +61,8 @@
                 roughness: 0,
                 transmission: 0.9,
                 thickness: 0.9,
+                envMap: envMap,
                 ior: 1.75,
-                envMap,
                 envMapIntensity: 1,
                 clearcoat: 1,
                 clearcoatRoughness: 0.6
@@ -69,7 +72,7 @@
         // Torus knot
         const torusKnot = new THREE.Mesh(
             new THREE.TorusKnotGeometry(2, 0.8, 200, 32),
-            makeGlassMaterial(0xffffff)
+            makeGlassMaterial(0x000000)
         );
         scene.add(torusKnot);
 
@@ -101,6 +104,12 @@
             camera.lookAt(0, 0, 0);
             renderer.render(scene, camera);
         }
+        window.addEventListener("keydown", (e) => {
+            if (e.key.toLowerCase() === "b") {
+                bgOn = !bgOn; // toggle state
+                scene.background = bgOn ? savedBackground : null; // or new THREE.Color(0x000000)
+            }
+        });
         animate();
     </script>
 
