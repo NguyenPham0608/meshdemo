@@ -36,6 +36,21 @@
         light.position.set(1, 1, 1);
         scene.add(light);
 
+        // Environment map (optional background toggle)
+        const cubeTextureSets = ["Bridge2", "Park2"];
+        const selectedSet = cubeTextureSets[Math.floor(Math.random() * cubeTextureSets.length)];
+        const loader = new THREE.CubeTextureLoader();
+        const envMap = loader.load([
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posx.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negx.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posy.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negy.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posz.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negz.jpg`
+        ]);
+        scene.background = null;
+        let bgOn = false;
+        let savedBackground = envMap;
 
         // Torus knot geometry with vertex colors
         const geometry = new THREE.TorusKnotGeometry(2, 0.8, 400, 64);
@@ -90,6 +105,14 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Background toggle with "B"
+        window.addEventListener("keydown", (e) => {
+            if (e.key.toLowerCase() === "b") {
+                bgOn = !bgOn;
+                scene.background = bgOn ? savedBackground : null;
+            }
         });
 
         // Animation loop
