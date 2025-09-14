@@ -59,15 +59,14 @@
         const cubeTextureSets = ["Bridge2", "Park2"];
         const selectedSet = cubeTextureSets[Math.floor(Math.random() * cubeTextureSets.length)];
         const loaderEnv = new THREE.CubeTextureLoader();
-        //let envMap = loaderEnv.load([
-        //    `https://threejs.org/examples/textures/cube/${selectedSet}/posx.jpg`,
-        //    `https://threejs.org/examples/textures/cube/${selectedSet}/negx.jpg`,
-        //    `https://threejs.org/examples/textures/cube/${selectedSet}/posy.jpg`,
-        //    `https://threejs.org/examples/textures/cube/${selectedSet}/negy.jpg`,
-        //    `https://threejs.org/examples/textures/cube/${selectedSet}/posz.jpg`,
-        //    `https://threejs.org/examples/textures/cube/${selectedSet}/negz.jpg`
-        //]);
-        envMap = null
+        let envMap = loaderEnv.load([
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posx.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negx.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posy.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negy.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posz.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negz.jpg`
+        ]);
         let bgOn = false;
 
         let savedBackground = envMap;
