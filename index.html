@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Glass Orbit Playground</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js";
+
+        // Scene, camera, renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // Array of available cube texture sets
+        const cubeTextureSets = [
+            "Bridge2",
+            "Park2",
+        ];
+
+        // Pick one randomly
+        const selectedSet = cubeTextureSets[Math.floor(Math.random() * cubeTextureSets.length)];
+
+        // Load environment map
+        const loader = new THREE.CubeTextureLoader();
+        const envMap = loader.load([
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posx.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negx.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posy.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negy.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/posz.jpg`,
+            `https://threejs.org/examples/textures/cube/${selectedSet}/negz.jpg`
+        ]);
+        scene.background = envMap;
+
+        // Glass material factory
+        function makeGlassMaterial(color) {
+            return new THREE.MeshPhysicalMaterial({
+                color,
+                metalness: 0,
+                roughness: 0,
+                transmission: 0.9,
+                thickness: 0.9,
+                ior: 1.75,
+                envMap,
+                envMapIntensity: 1,
+                clearcoat: 1,
+                clearcoatRoughness: 0.6
+            });
+        }
+
+        // Torus knot
+        const torusKnot = new THREE.Mesh(
+            new THREE.TorusKnotGeometry(2, 0.8, 200, 32),
+            makeGlassMaterial(0xffffff)
+        );
+        scene.add(torusKnot);
+
+        // Camera orbit logic
+        let angle = 0;
+        let radius = 12;
+        let tilt = 0.3;
+        camera.lookAt(0, 0, 0);
+
+        // Wheel scroll for orbit
+        window.addEventListener("wheel", e => {
+            angle += e.deltaY * 0.002;
+        });
+
+        // Resize
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            const y = Math.sin(tilt) * radius * 0.3;
+            camera.position.set(x, y, z);
+            camera.lookAt(0, 0, 0);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+
+</body>
+
+</html>
